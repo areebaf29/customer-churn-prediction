@@ -79,10 +79,10 @@ where the script is stored, rather than the terminal's working folder.
 ## Dataset
 
 IBM Telco Customer Churn, not stored in this repository. Download
-`WA_Fn-UseC_-Telco-Customer-Churn.csv` (for example from
-https://www.kaggle.com/datasets/blastchar/telco-customer-churn, which hosts
-the IBM sample data) and save it as
-`data/WA_Fn-UseC_-Telco-Customer-Churn.csv`, creating the `data` folder.
+https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv
+and save it as `data/WA_Fn-UseC_-Telco-Customer-Churn.csv` (rename it and
+create the `data` folder). Then run `python train_model.py` before starting
+the app.
 Origin: https://github.com/IBM/telco-customer-churn-on-icp4d (see DATA_NOTICE.md)
 
 7,043 customers and 21 columns. Cleaning removes the 11 rows with blank

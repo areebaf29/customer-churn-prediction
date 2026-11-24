@@ -1,0 +1,89 @@
+================================================================
+CUSTOMER CHURN PREDICTION - MODEL TRAINING
+================================================================
+
+[1] Raw dataset loaded: 7043 rows x 21 columns
+
+First 5 rows:
+   customerID  gender  SeniorCitizen Partner Dependents  tenure PhoneService     MultipleLines InternetService OnlineSecurity OnlineBackup DeviceProtection TechSupport StreamingTV StreamingMovies        Contract PaperlessBilling              PaymentMethod  MonthlyCharges TotalCharges Churn
+0  7590-VHVEG  Female              0     Yes         No       1           No  No phone service             DSL             No          Yes               No          No          No              No  Month-to-month              Yes           Electronic check           29.85        29.85    No
+1  5575-GNVDE    Male              0      No         No      34          Yes                No             DSL            Yes           No              Yes          No          No              No        One year               No               Mailed check           56.95       1889.5    No
+2  3668-QPYBK    Male              0      No         No       2          Yes                No             DSL            Yes          Yes               No          No          No              No  Month-to-month              Yes               Mailed check           53.85       108.15   Yes
+3  7795-CFOCW    Male              0      No         No      45           No  No phone service             DSL            Yes           No              Yes         Yes          No              No        One year               No  Bank transfer (automatic)           42.30      1840.75    No
+4  9237-HQITU  Female              0      No         No       2          Yes                No     Fiber optic             No           No               No          No          No              No  Month-to-month              Yes           Electronic check           70.70       151.65   Yes
+
+Churn distribution (raw):
+Churn
+No     5174
+Yes    1869
+
+[2] Cleaning:
+  - TotalCharges converted to numeric (11 blank values -> rows dropped)
+  - customerID dropped (identifier, not a predictor)
+  - Churn encoded Yes=1 / No=0
+  - Clean dataset: 7032 rows x 20 columns
+  - Churn rate: 26.6%  (1869 churned / 7032 customers)
+
+  Numeric features (4): ['tenure', 'MonthlyCharges', 'TotalCharges', 'SeniorCitizen']
+  Categorical features (15): ['gender', 'Partner', 'Dependents', 'PhoneService', 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod']
+
+[3] Exploratory data analysis - saving plots
+  saved: eda_churn_distribution.png, eda_tenure_by_churn.png,
+         eda_monthly_charges.png, eda_contract_churn.png
+
+  Quick facts:
+  - Avg tenure   churned 18.0 mo vs stayed 37.7 mo
+  - Avg monthly  churned $74.44 vs stayed $61.31
+  - Churn rate by contract: Month-to-month 42.7%, One year 11.3%, Two year 2.8%
+
+[4] Train/validation/test split (stratified 60/20/20, random_state=42):
+  train 4218 | validation 1407 | test 1407 rows
+  churn rate: train 26.6% | val 26.6% | test 26.6% (stratified, all match overall)
+  Validation set is used for model selection and threshold tuning;
+  the test set stays untouched until the single final evaluation.
+
+[5] Model selection on the validation set (models fit on train only)
+----------------------------------------------------------------
+Logistic Regression   acc 0.7896 | prec 0.6327 | rec 0.4973 | f1 0.5569 | ROC-AUC 0.8356
+Random Forest         acc 0.7811 | prec 0.6213 | rec 0.4519 | f1 0.5232 | ROC-AUC 0.8136
+Gradient Boosting     acc 0.8017 | prec 0.6740 | rec 0.4920 | f1 0.5688 | ROC-AUC 0.8347
+----------------------------------------------------------------
+Selected model (best validation ROC-AUC): Logistic Regression (0.8356)
+
+[6] Decision-threshold tuning on the validation set
+  threshold | precision | recall | f1
+     0.20   |   0.475   | 0.850  | 0.610
+     0.25   |   0.516   | 0.786  | 0.623
+     0.30   |   0.547   | 0.727  | 0.625
+     0.35   |   0.555   | 0.663  | 0.604
+     0.40   |   0.583   | 0.612  | 0.597
+     0.45   |   0.610   | 0.564  | 0.586
+     0.50   |   0.633   | 0.497  | 0.557
+     0.55   |   0.684   | 0.463  | 0.552
+     0.60   |   0.730   | 0.382  | 0.502
+     0.65   |   0.765   | 0.305  | 0.436
+     0.70   |   0.820   | 0.195  | 0.315
+  -> best validation F1 at threshold 0.30 (precision 0.547, recall 0.727)
+
+[7] Final evaluation on the untouched test set
+  Logistic Regression refit on train+validation (5625 rows)
+  TEST @ 0.50 default : acc 0.8038 | prec 0.6485 | rec 0.5722 | f1 0.6080 | ROC-AUC 0.8359
+  TEST @ 0.30 (chosen on val): acc 0.7427 | prec 0.5108 | rec 0.7594 | f1 0.6108
+
+[8] Feature importance (permutation importance, final model, test set)
+  tenure                 0.1910
+  InternetService        0.0441
+  Contract               0.0335
+  MonthlyCharges         0.0231
+  TotalCharges           0.0215
+  PaperlessBilling       0.0042
+  StreamingTV            0.0034
+  StreamingMovies        0.0031
+  TechSupport            0.0030
+  PaymentMethod          0.0029
+
+[9] Saved model -> outputs/churn_model.joblib
+    Saved metrics -> outputs/metrics.json
+    All plots saved in outputs/
+
+Training complete.

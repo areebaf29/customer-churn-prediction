@@ -1,0 +1,11 @@
+# Verified with Python 3.10.12. Use a fresh virtual environment.
+# scikit-learn and pandas match the original model build.
+# The other exact versions below were validated during package repair.
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+joblib==1.5.2
+threadpoolctl==3.6.0
+matplotlib==3.10.9
+streamlit==1.50.0

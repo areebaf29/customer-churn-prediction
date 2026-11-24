@@ -9,7 +9,7 @@ refit on train + validation and evaluated on the held-out test set.
 The saved model file is not stored in this repository. Train it once with
 `train_model.py` (below), then start the app.
 
-1. Download or clone the repository.
+1. Download or clone the repository, and add the dataset (see Dataset below).
 2. In VS Code choose File > Open Folder and open the project folder,
    containing `app.py` and `requirements.txt`.
 3. Open Terminal > New Terminal.
@@ -78,9 +78,12 @@ where the script is stored, rather than the terminal's working folder.
 
 ## Dataset
 
-IBM Telco Customer Churn, bundled at
-`data/WA_Fn-UseC_-Telco-Customer-Churn.csv`.
-Source: https://github.com/IBM/telco-customer-churn-on-icp4d (see DATA_NOTICE.md)
+IBM Telco Customer Churn, not stored in this repository. Download
+`WA_Fn-UseC_-Telco-Customer-Churn.csv` (for example from
+https://www.kaggle.com/datasets/blastchar/telco-customer-churn, which hosts
+the IBM sample data) and save it as
+`data/WA_Fn-UseC_-Telco-Customer-Churn.csv`, creating the `data` folder.
+Origin: https://github.com/IBM/telco-customer-churn-on-icp4d (see DATA_NOTICE.md)
 
 7,043 customers and 21 columns. Cleaning removes the 11 rows with blank
 TotalCharges and drops customerID: 7,032 rows, 19 predictors and the
@@ -105,12 +108,8 @@ requirements.txt
 requirements-lock.txt
 README.md
 DATA_NOTICE.md
-data/
-  WA_Fn-UseC_-Telco-Customer-Churn.csv
-outputs/
-  metrics.json
-  training_output.txt
-  (churn_model.joblib and plots are created by train_model.py)
+data/       (add the CSV here)
+outputs/    (created by train_model.py)
 ```
 
 ## Troubleshooting
@@ -119,6 +118,7 @@ outputs/
   virtual-environment Python used to launch the app.
 - Model version warning or load error: create a fresh environment, install
   the pinned requirements and run train_model.py again.
-- Missing model/data: run train_model.py from the project folder. Run train_model.py to create the model.
+- Missing data file: add the CSV at the path shown in the Dataset section.
+- Missing model: run train_model.py from the project folder. Run train_model.py to create the model.
 - Port 8501 busy: append `--server.port 8502` to the app command and open
   http://localhost:8502.
